@@ -111,6 +111,10 @@ class BackupNotifier(private val context: Context) {
         maxAmount: Int = 100,
         sync: Boolean = false,
     ): NotificationCompat.Builder {
+        // KMK -->
+        backupRestoreStatus.updateProgress(progress.toFloat() / maxAmount)
+        // KMK <--
+        
         lock.withLock {
             val builder = (progressNotificationBuilder ?: newProgressBuilder().also { progressNotificationBuilder = it })
             with(builder) {
@@ -134,9 +138,6 @@ class BackupNotifier(private val context: Context) {
                 } else if (preferences.hideNotificationContent().get()) {
                     setContentText(null)
                 }
-                // KMK -->
-                backupRestoreStatus.updateProgress(progress.toFloat() / maxAmount)
-                // KMK <--
                 show(Notifications.ID_RESTORE_PROGRESS)
             }
             return builder

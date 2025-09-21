@@ -45,7 +45,7 @@ class BackupRestorer(
     private val categoriesRestorer: CategoriesRestorer = CategoriesRestorer(),
     private val preferenceRestorer: PreferenceRestorer = PreferenceRestorer(context),
     private val extensionRepoRestorer: ExtensionRepoRestorer = ExtensionRepoRestorer(),
-    private val mangaRestorer: MangaRestorer = MangaRestorer(),
+    private val mangaRestorer: MangaRestorer = MangaRestorer(isSync),
     // SY -->
     private val savedSearchRestorer: SavedSearchRestorer = SavedSearchRestorer(),
     // SY <--
@@ -155,9 +155,6 @@ class BackupRestorer(
                 restoreAmount,
                 isSync,
             )
-                // KMK -->
-                .show(Notifications.ID_RESTORE_PROGRESS)
-            // KMK <--
         }
     }
 
@@ -182,9 +179,6 @@ class BackupRestorer(
                 restoreAmount,
                 isSync,
             )
-                // KMK -->
-                .show(Notifications.ID_RESTORE_PROGRESS)
-            // KMK <--
         }
     }
     // SY <--
@@ -198,7 +192,7 @@ class BackupRestorer(
             async {
                 ensureActive()
                 try {
-                    mangaRestorer.restore(it, backupCategories, isSync)
+                    mangaRestorer.restore(it, backupCategories)
                 } catch (e: Exception) {
                     val sourceName = sourceMapping[it.source] ?: it.source.toString()
                     errors.add(Date() to "${it.title} [$sourceName]: ${e.message}")
@@ -206,7 +200,6 @@ class BackupRestorer(
                     val currentProgress = restoreProgress.incrementAndGet()
                     if (currentProgress == restoreAmount || currentProgress % MANGA_PROGRESS_BATCH == 0) {
                         notifier.showRestoreProgress(it.title, currentProgress, restoreAmount, isSync)
-                            .show(Notifications.ID_RESTORE_PROGRESS)
                     }
                 }
             }
@@ -215,7 +208,6 @@ class BackupRestorer(
         val finalProgress = restoreProgress.get()
         if (finalProgress < restoreAmount) {
             notifier.showRestoreProgress(context.stringResource(MR.strings.restoring_backup), finalProgress, restoreAmount, isSync)
-                .show(Notifications.ID_RESTORE_PROGRESS)
         }
     }
 
@@ -237,9 +229,6 @@ class BackupRestorer(
                 restoreAmount,
                 isSync,
             )
-                // KMK -->
-                .show(Notifications.ID_RESTORE_PROGRESS)
-            // KMK <--
         }
     }
 
@@ -255,9 +244,6 @@ class BackupRestorer(
                 restoreAmount,
                 isSync,
             )
-                // KMK -->
-                .show(Notifications.ID_RESTORE_PROGRESS)
-            // KMK <--
         }
     }
 
@@ -282,9 +268,6 @@ class BackupRestorer(
                         restoreAmount,
                         isSync,
                     )
-                        // KMK -->
-                        .show(Notifications.ID_RESTORE_PROGRESS)
-                    // KMK <--
                 }
             }
     }
