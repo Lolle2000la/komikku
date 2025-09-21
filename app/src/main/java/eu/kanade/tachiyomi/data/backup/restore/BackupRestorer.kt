@@ -45,7 +45,7 @@ class BackupRestorer(
     private val categoriesRestorer: CategoriesRestorer = CategoriesRestorer(),
     private val preferenceRestorer: PreferenceRestorer = PreferenceRestorer(context),
     private val extensionRepoRestorer: ExtensionRepoRestorer = ExtensionRepoRestorer(),
-    private val mangaRestorer: MangaRestorer = MangaRestorer(isSync),
+    private val mangaRestorer: MangaRestorer = MangaRestorer(),
     // SY -->
     private val savedSearchRestorer: SavedSearchRestorer = SavedSearchRestorer(),
     // SY <--
@@ -198,7 +198,7 @@ class BackupRestorer(
             async {
                 ensureActive()
                 try {
-                    mangaRestorer.restore(it, backupCategories)
+                    mangaRestorer.restore(it, backupCategories, isSync)
                 } catch (e: Exception) {
                     val sourceName = sourceMapping[it.source] ?: it.source.toString()
                     errors.add(Date() to "${it.title} [$sourceName]: ${e.message}")

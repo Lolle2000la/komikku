@@ -35,8 +35,6 @@ import kotlin.math.max
 import kotlin.math.min
 
 class MangaRestorer(
-    private var isSync: Boolean = false,
-
     private val handler: DatabaseHandler = Injekt.get(),
     private val getCategories: GetCategories = Injekt.get(),
     private val getMangaByUrlAndSourceId: GetMangaByUrlAndSourceId = Injekt.get(),
@@ -79,6 +77,7 @@ class MangaRestorer(
     suspend fun restore(
         backupManga: BackupManga,
         backupCategories: List<BackupCategory>,
+        isSync: Boolean = false,
     ) {
         handler.await(inTransaction = true) {
             val dbManga = findExistingManga(backupManga)
