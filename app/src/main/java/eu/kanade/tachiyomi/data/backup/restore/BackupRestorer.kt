@@ -143,8 +143,7 @@ class BackupRestorer(
         }
     }
 
-    context(CoroutineScope)
-    private /* KMK --> */suspend /* KMK <-- */ fun restoreCategories(backupCategories: List<BackupCategory>) = launch(dispatcher) {
+    private fun CoroutineScope.restoreCategories(backupCategories: List<BackupCategory>) = launch(dispatcher) {
         ensureActive()
         categoriesRestorer(backupCategories)
 
@@ -207,6 +206,7 @@ class BackupRestorer(
                     val currentProgress = restoreProgress.incrementAndGet()
                     if (currentProgress == restoreAmount || currentProgress % MANGA_PROGRESS_BATCH == 0) {
                         notifier.showRestoreProgress(it.title, currentProgress, restoreAmount, isSync)
+                            .show(Notifications.ID_RESTORE_PROGRESS)
                     }
                 }
             }
@@ -215,6 +215,7 @@ class BackupRestorer(
         val finalProgress = restoreProgress.get()
         if (finalProgress < restoreAmount) {
             notifier.showRestoreProgress(context.stringResource(MR.strings.restoring_backup), finalProgress, restoreAmount, isSync)
+                .show(Notifications.ID_RESTORE_PROGRESS)
         }
     }
 
